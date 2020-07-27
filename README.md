@@ -6,3 +6,7 @@ This tool will allow you to create a countdown timer file to be consumed by OBS.
 Test it yourself by creating and initializing a bracet in Challonge. Add your username and API key in __main__ and add the tournament(s) you would like to query. Point OBS to timer.txt, red.txt and blue.txt in the folder and execute the program.
 
 This code does NOT upload any data to challonge, but it could be modified to submit results. 
+
+Requires pychal (https://pypi.org/project/pychal/) and Kivy (https://kivy.org/#home)
+
+Definitely alpha. Like most of my bots...
