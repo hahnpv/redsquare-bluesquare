@@ -1,6 +1,7 @@
 import threading
 import challonge
 import math
+import serial
 from time import sleep
 from kivy.app import App
 from kivy.uix.button import Button
@@ -24,6 +25,7 @@ class Thread(BoxLayout):
             timestamp = self.timestr()
             self.ids.lbl.text = "{}".format(timestamp)
             open('timer.txt', 'w').write(timestamp)
+            ser.write(bytes(timestamp + '\n','utf8'))
             sleep(1)
             if self.counter == 0:
                 print('breaking, self.counter == 0')
@@ -50,6 +52,8 @@ class Thread(BoxLayout):
         timestamp = self.timestr()
         print(self.counter)
         print(timestamp)
+        open('timer.txt', 'w').write(timestamp)
+        ser.write(bytes(timestamp + '\n','utf8'))
         instance.parent.parent.ids.lbl.text = "{}".format(timestamp)
         instance.parent.parent.ids.start.text = "{}".format("Start")
 
@@ -100,12 +104,15 @@ class Thread(BoxLayout):
 
 class MyApp(App):
     def build(self):
-        self.load_kv('redsquare-bluesquar.kv')
+        self.load_kv('redsquare-bluesquare.kv')
         return Thread() 
 
 if __name__ == "__main__":
+    ser = serial.Serial('COM6')  # open serial port
+    # TO DEBUG: python -m serial.tools.list_ports
+    ser.write(b'0:00')
 
-    challonge.set_credentials("user", "apikey")
+    challonge.set_credentials("user", "pass")
     tournament = [challonge.tournaments.show("arrtestfairy"),
                 challonge.tournaments.show("arrtestant"),
                 challonge.tournaments.show("arrtestplastic"),
