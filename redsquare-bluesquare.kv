@@ -1,11 +1,11 @@
 <Thread>:
     rows: 2
-    spacing: 10
-    padding: 10
+    spacing: 5
+    padding: 5
     orientation: 'vertical'
     BoxLayout:
-        size_hint: 1.0, 0.1
-        padding: 10
+        size_hint: 1.0, 0.075
+        padding: 5
         orientation: 'horizontal'
         Button:
             id: start
@@ -24,14 +24,14 @@
             on_release: root.refresh_combatants(self)
     ScrollView:
         id: scrollview
-#        size_hint: 1.0,0.9
         size: self.size
+        size_y_hint: None
         GridLayout:
             id: gridlayout
             cols: 1
-            spacing: 10
+            spacing: 5
             size_hint_y: None
-            row_default_height: '50dp'
+            row_default_height: '30dp'
 # https://stackoverflow.com/questions/26686631/how-do-you-scroll-a-gridlayout-inside-kivy-scrollview
 # no size hint has nice layout but won't scroll. 1, None has crap layout but will scroll
 #            size_hint: 1.0, None

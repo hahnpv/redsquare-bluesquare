@@ -9,6 +9,8 @@ from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.gridlayout import GridLayout
 from kivy.properties import NumericProperty
 
+serialClock = False
+
 class Thread(BoxLayout):
     duration = NumericProperty(180)             # seconds
     counter = NumericProperty(180)
@@ -21,19 +23,27 @@ class Thread(BoxLayout):
         return timestamp
 
     def Counter_function(self):
+        print("duration")
         for i in range(self.duration):
+            self.counter -= 1 
             timestamp = self.timestr()
             self.ids.lbl.text = "{}".format(timestamp)
             open('timer.txt', 'w').write(timestamp)
-            ser.write(bytes(timestamp + '\n','utf8'))
+            if serialClock is True:
+                print('tic')
+                try:
+                    ser.write(bytes(timestamp + '\n','utf8'))
+                except:
+                    print(sys.exc_info()[0])
+                print('toc')
             sleep(1)
+            print(self.counter)
             if self.counter == 0:
                 print('breaking, self.counter == 0')
                 break
             if self.pause is True:
                 print('breaking, self.pause is True')
                 break
-            self.counter -= 1 
 
     def toggle_thread(self, instance):
         if self.pause is True:
@@ -53,7 +63,8 @@ class Thread(BoxLayout):
         print(self.counter)
         print(timestamp)
         open('timer.txt', 'w').write(timestamp)
-        ser.write(bytes(timestamp + '\n','utf8'))
+        if serialClock is True:
+            ser.write(bytes(timestamp + '\n','utf8'))
         instance.parent.parent.ids.lbl.text = "{}".format(timestamp)
         instance.parent.parent.ids.start.text = "{}".format("Start")
 
@@ -108,15 +119,16 @@ class MyApp(App):
         return Thread() 
 
 if __name__ == "__main__":
-    ser = serial.Serial('COM6')  # open serial port
-    # TO DEBUG: python -m serial.tools.list_ports
-    ser.write(b'0:00')
-
-    challonge.set_credentials("user", "pass")
-    tournament = [challonge.tournaments.show("arrtestfairy"),
-                challonge.tournaments.show("arrtestant"),
-                challonge.tournaments.show("arrtestplastic"),
-                challonge.tournaments.show("arrtestbeetle")
+    if serialClock is True:
+        ser = serial.Serial('COM3',write_timeout=0.5) #, timeout=0)  # open serial port
+        # TO DEBUG: python -m serial.tools.list_ports
+        ser.write(b'0:00')
+    
+    challonge.set_credentials("User", "API Key")
+    tournament = [
+                challonge.tournaments.show("Tournament1"),
+                challonge.tournaments.show("Tournament2"),
+                challonge.tournaments.show("Tournament3"),
                 ]
 
     app = MyApp()

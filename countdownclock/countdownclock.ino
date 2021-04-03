@@ -29,7 +29,7 @@ void display_digit(int i, int k)
   {
     if(digits[i][j])
     {
-      leds[j+offset] = CRGB(255, 0, 0);
+      leds[j+offset] = CRGB(32, 0, 0);
     }  else {
       leds[j+offset] = CRGB(0, 0, 0);     
     }
@@ -49,7 +49,7 @@ void recv() {
         rc = Serial.read();
 
         if (rc != endMarker) {
-            Serial.print("received: ");Serial.println(rc);
+//            Serial.print("received: ");Serial.println(rc);
             receivedChars[ndx] = rc;
             ndx++;
             if (ndx >= numChars) {
@@ -59,7 +59,7 @@ void recv() {
         else {
 //            receivedChars[ndx] = '\0'; // terminate the string
             ndx = 0;
-            Serial.print("string: ");Serial.println(receivedChars);
+//            Serial.print("string: ");Serial.println(receivedChars);
             newData = true;
         }
     }
@@ -70,15 +70,15 @@ void recv() {
 void setup() {
 Serial.begin(9600);
 FastLED.addLeds<WS2812, LED_PIN, GRB>(leds, NUM_LEDS);
-leds[NUM_LEDS-2] = CRGB(255, 0, 0);
-leds[NUM_LEDS-1] = CRGB(255, 0, 0);
+leds[NUM_LEDS-2] = CRGB(32, 0, 0);
+leds[NUM_LEDS-1] = CRGB(32, 0, 0);
 }
 
 void loop() {
   recv();
   if(newData)
   {
-    Serial.println("Showing new chars");
+//    Serial.println("Showing new chars");
     display_digit(receivedChars[0]-'0', 1);
     display_digit(receivedChars[2]-'0', 2);
     display_digit(receivedChars[3]-'0', 3);
