@@ -7,6 +7,6 @@ Test it yourself by creating and initializing a bracet in Challonge. Add your us
 
 This code does NOT upload any data to challonge, but it could be modified to submit results. 
 
-Requires pychal (https://pypi.org/project/pychal/) and Kivy (https://kivy.org/#home)
+Requires pychallonge (https://github.com/ZEDGR/pychallonge) and Kivy (https://kivy.org/#home)
 
 Definitely alpha. Like most of my bots...
