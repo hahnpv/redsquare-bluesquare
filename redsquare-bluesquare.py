@@ -69,9 +69,22 @@ class Thread(BoxLayout):
         instance.parent.parent.ids.start.text = "{}".format("Start")
 
     def redsquare_bluesquare(self, instance):
-        print(instance.player1 + " vs " + instance.player2)
+        print(instance.player1 + " vs " + instance.player2 + " round " + str(instance.round))
         open('red.txt', 'w').write(instance.player1)
         open('blue.txt', 'w').write(instance.player2)
+        open('winner.txt', 'w').write("")
+        if instance.round < 0:
+            # loser bracket
+            open('round.txt', 'w').write("Winner Bracket, Round " + str(-1 * instance.round))
+        else:
+            # winner bracker
+            open('round.txt', 'w').write("Loser Bracket, Round " + str(instance.round))
+
+    def post_winner(self, instance):
+        print(instance.match)
+        print(instance.winner["name"] + " wins match")
+        open('winner.txt', 'w').write("Winnner: " + instance.winner["name"])
+        challonge.matches.update(instance.winner["tournament_id"], instance.match["id"], scores_csv="1-1", winner_id=instance.winner["id"])
 
     def refresh_combatants(self, instance):
         gl = instance.parent.parent.ids.gridlayout
@@ -92,21 +105,38 @@ class Thread(BoxLayout):
 
                 # print combatants for each open match
                 open_matches = (m for m in matches if m["state"]=="open")
+                open_matches = sorted(list(open_matches), key=lambda x:x["round"])
+
                 for m in open_matches:
                     p1 = m["player1_id"]
                     p2 = m["player2_id"]
                     player1 = next(p for p in participants if p["id"]==p1)
                     player2 = next(p for p in participants if p["id"]==p2)
 
-                    layout = GridLayout(cols=3, spacing=10, height=40, size_hint_x=1.0)
+# using a lambda for trivial callbacks:
+#                    buttoncallback = lambda:print(g.text)
+#                    btn.bind(on_press=buttoncallback)  
+
+                    layout = GridLayout(cols=5, spacing=10, height=40, size_hint_x=1.0)
+                    btn = Button(text = "Winner", size_hint_y=1.0, height=40, background_color=(0,1,0,1.0))
+                    btn.winner = player1
+                    btn.match = m
+                    btn.bind(on_release=self.post_winner)
+                    layout.add_widget(btn)
                     btn = Button(text = player1["name"], size_hint_y=1.0, height=40, background_color=(1,0,0,1.0))
                     layout.add_widget(btn)
                     btn = Button(text = "vs", size_hint_x=1.0, height=40)
                     btn.player1 = player1["name"]
                     btn.player2 = player2["name"]
+                    btn.round   = m["round"]
                     btn.bind(on_release=self.redsquare_bluesquare)
                     layout.add_widget(btn)
                     btn = Button(text = player2["name"], size_hint_y=1.0, height=40, background_color=(0,0,1,1.0))
+                    layout.add_widget(btn)
+                    btn = Button(text = "Winner", size_hint_y=1.0, height=40, background_color=(0,1,0,1.0))
+                    btn.winner = player2
+                    btn.match = m
+                    btn.bind(on_release=self.post_winner)
                     layout.add_widget(btn)
                     gl.add_widget(layout)
 
@@ -124,11 +154,12 @@ if __name__ == "__main__":
         # TO DEBUG: python -m serial.tools.list_ports
         ser.write(b'0:00')
     
-    challonge.set_credentials("User", "API Key")
+    challonge.set_credentials("user", "pass")
     tournament = [
-                challonge.tournaments.show("Tournament1"),
-                challonge.tournaments.show("Tournament2"),
-                challonge.tournaments.show("Tournament3"),
+#                challonge.tournaments.show("TRTO5Fairy"),
+#                challonge.tournaments.show("TRTO5Plastic"),
+#                challonge.tournaments.show("TRTO5Ant"),
+#                challonge.tournaments.show("TRTO5Beetle"),
                 ]
 
     app = MyApp()
