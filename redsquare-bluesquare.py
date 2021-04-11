@@ -84,7 +84,9 @@ class Thread(BoxLayout):
         print(instance.match)
         print(instance.winner["name"] + " wins match")
         open('winner.txt', 'w').write("Winnner: " + instance.winner["name"])
-        challonge.matches.update(instance.winner["tournament_id"], instance.match["id"], scores_csv="1-1", winner_id=instance.winner["id"])
+        retval = challonge.matches.update(instance.winner["tournament_id"], instance.match["id"], scores_csv="1-1", winner_id=instance.winner["id"])
+        instance.background_color = (0,1,0,1)
+        instance.opponentbtn.background_color = (0,0,0,1)
 
     def refresh_combatants(self, instance):
         gl = instance.parent.parent.ids.gridlayout
@@ -117,27 +119,29 @@ class Thread(BoxLayout):
 #                    buttoncallback = lambda:print(g.text)
 #                    btn.bind(on_press=buttoncallback)  
 
-                    layout = GridLayout(cols=5, spacing=10, height=40, size_hint_x=1.0)
-                    btn = Button(text = "Winner", size_hint_y=1.0, height=40, background_color=(0,1,0,1.0))
-                    btn.winner = player1
-                    btn.match = m
-                    btn.bind(on_release=self.post_winner)
-                    layout.add_widget(btn)
-                    btn = Button(text = player1["name"], size_hint_y=1.0, height=40, background_color=(1,0,0,1.0))
-                    layout.add_widget(btn)
+                    layout = GridLayout(cols=3, spacing=10, height=40, size_hint_x=1.0)
+                    btn1 = Button(text = player1["name"], size_hint_y=1.0, height=40, background_color=(1,0,0,1.0))
+                    btn1.winner = player1
+                    btn1.match = m
+                    btn1.bind(on_release=self.post_winner)
+
                     btn = Button(text = "vs", size_hint_x=1.0, height=40)
                     btn.player1 = player1["name"]
                     btn.player2 = player2["name"]
                     btn.round   = m["round"]
                     btn.bind(on_release=self.redsquare_bluesquare)
+
+                    btn2 = Button(text = player2["name"], size_hint_y=1.0, height=40, background_color=(0,0,1,1.0))
+                    btn2.winner = player2
+                    btn2.match = m
+                    btn2.opponentbtn = btn1
+                    btn2.bind(on_release=self.post_winner)
+
+                    btn1.opponentbtn = btn2
+
+                    layout.add_widget(btn1)
                     layout.add_widget(btn)
-                    btn = Button(text = player2["name"], size_hint_y=1.0, height=40, background_color=(0,0,1,1.0))
-                    layout.add_widget(btn)
-                    btn = Button(text = "Winner", size_hint_y=1.0, height=40, background_color=(0,1,0,1.0))
-                    btn.winner = player2
-                    btn.match = m
-                    btn.bind(on_release=self.post_winner)
-                    layout.add_widget(btn)
+                    layout.add_widget(btn2)
                     gl.add_widget(layout)
 
         # Make sure the height is such that there is something to scroll.
@@ -154,12 +158,10 @@ if __name__ == "__main__":
         # TO DEBUG: python -m serial.tools.list_ports
         ser.write(b'0:00')
     
-    challonge.set_credentials("user", "pass")
+    challonge.set_credentials("user", "key")
     tournament = [
-#                challonge.tournaments.show("TRTO5Fairy"),
-#                challonge.tournaments.show("TRTO5Plastic"),
-#                challonge.tournaments.show("TRTO5Ant"),
-#                challonge.tournaments.show("TRTO5Beetle"),
+                challonge.tournaments.show("Tournament1"),
+                challonge.tournaments.show("Tournament2"),
                 ]
 
     app = MyApp()
